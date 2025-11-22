@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { GlobalSettings, AspectRatio, DEFAULT_STYLES, DEFAULT_VOICES } from '../types';
+import { GlobalSettings, AspectRatio, DEFAULT_STYLES, VOICE_OPTIONS } from '../types';
 import { Sparkles, Youtube, FileText, Settings2 } from 'lucide-react';
 
 interface SetupFormProps {
@@ -11,7 +12,7 @@ const SetupForm: React.FC<SetupFormProps> = ({ onSubmit, isLoading }) => {
   const [mode, setMode] = useState<'topic' | 'script'>('topic');
   const [content, setContent] = useState('');
   const [style, setStyle] = useState(DEFAULT_STYLES[0]);
-  const [voice, setVoice] = useState(DEFAULT_VOICES[0]);
+  const [voice, setVoice] = useState(VOICE_OPTIONS[0].id);
   const [ratio, setRatio] = useState<AspectRatio>(AspectRatio.WIDE);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -101,7 +102,16 @@ const SetupForm: React.FC<SetupFormProps> = ({ onSubmit, isLoading }) => {
               onChange={(e) => setVoice(e.target.value)}
               className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none"
             >
-              {DEFAULT_VOICES.map(v => <option key={v} value={v}>{v}</option>)}
+              <optgroup label="Standard (Free)">
+                {VOICE_OPTIONS.filter(v => v.category === 'Standard (Free)').map(v => (
+                  <option key={v.id} value={v.id}>{v.label}</option>
+                ))}
+              </optgroup>
+              <optgroup label="Premium (High Quality)">
+                {VOICE_OPTIONS.filter(v => v.category === 'Premium (High Quality)').map(v => (
+                  <option key={v.id} value={v.id}>{v.label}</option>
+                ))}
+              </optgroup>
             </select>
           </div>
         </div>

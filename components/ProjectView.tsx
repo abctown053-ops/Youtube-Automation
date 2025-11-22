@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ProjectPlan, Scene } from '../types';
-import { Copy, Clock, Image as ImageIcon, Mic, Hash, Tag, Download, Sparkles, Wand2, Play, Loader2, Music, Volume2, FileText, Check } from 'lucide-react';
+import { Copy, Clock, Image as ImageIcon, Mic, Hash, Tag, Download, Sparkles, Wand2, Play, Loader2, Music, Volume2, FileText, Check, Upload } from 'lucide-react';
 import { generateSceneImage, generateVoiceOver } from '../services/geminiService';
 
 interface ProjectViewProps {
@@ -59,6 +59,14 @@ const ProjectView: React.FC<ProjectViewProps> = ({ plan, onReset }) => {
       alert("Failed to generate audio. Please try again.");
     } finally {
       setGeneratingAudio(prev => ({ ...prev, [sceneNumber]: false }));
+    }
+  };
+
+  const handleFileUpload = (sceneNumber: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setGeneratedAudio(prev => ({ ...prev, [sceneNumber]: url }));
     }
   };
 
@@ -152,25 +160,48 @@ const ProjectView: React.FC<ProjectViewProps> = ({ plan, onReset }) => {
                            >
                               <Download size={16} />
                            </a>
+                           {/* Allow replacing the audio even if generated */}
+                           <label className="p-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors border border-slate-600 cursor-pointer" title="Upload Custom Audio">
+                              <Upload size={16} />
+                              <input 
+                                type="file" 
+                                accept="audio/*" 
+                                hidden 
+                                onChange={(e) => handleFileUpload(scene.sceneNumber, e)} 
+                              />
+                           </label>
                         </div>
                      ) : (
-                        <button
-                          onClick={() => handleGenerateAudio(scene.sceneNumber, scene.voiceOverScript)}
-                          disabled={generatingAudio[scene.sceneNumber]}
-                          className="flex items-center gap-2 px-4 py-2 bg-purple-600/90 hover:bg-purple-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg text-sm font-medium transition-all shadow-lg shadow-purple-900/20"
-                        >
-                           {generatingAudio[scene.sceneNumber] ? (
-                             <>
-                               <Loader2 size={14} className="animate-spin" />
-                               <span>Generating Audio...</span>
-                             </>
-                           ) : (
-                             <>
-                               <Mic size={14} />
-                               <span>Generate AI Voice</span>
-                             </>
-                           )}
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleGenerateAudio(scene.sceneNumber, scene.voiceOverScript)}
+                            disabled={generatingAudio[scene.sceneNumber]}
+                            className="flex items-center gap-2 px-4 py-2 bg-purple-600/90 hover:bg-purple-500 disabled:bg-slate-800 disabled:text-slate-500 text-white rounded-lg text-sm font-medium transition-all shadow-lg shadow-purple-900/20"
+                          >
+                             {generatingAudio[scene.sceneNumber] ? (
+                               <>
+                                 <Loader2 size={14} className="animate-spin" />
+                                 <span>Generating Audio...</span>
+                               </>
+                             ) : (
+                               <>
+                                 <Mic size={14} />
+                                 <span>Generate AI Voice</span>
+                               </>
+                             )}
+                          </button>
+                          
+                          <label className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-all border border-slate-700 cursor-pointer">
+                             <Upload size={14} />
+                             <span>Upload Audio</span>
+                             <input 
+                               type="file" 
+                               accept="audio/*" 
+                               hidden 
+                               onChange={(e) => handleFileUpload(scene.sceneNumber, e)} 
+                             />
+                          </label>
+                        </div>
                      )}
                   </div>
                 </div>
