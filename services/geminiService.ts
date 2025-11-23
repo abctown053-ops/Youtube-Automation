@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type, Schema, Chat } from "@google/genai";
 import { GlobalSettings, ProjectPlan, AudioPlan, VOICE_OPTIONS, ChatMessage } from "../types";
 
@@ -7,7 +6,7 @@ import { GlobalSettings, ProjectPlan, AudioPlan, VOICE_OPTIONS, ChatMessage } fr
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // ElevenLabs API Key provided by user
-const ELEVENLABS_API_KEY = "sk_027cc7d58d72b6e949861dc508c81ae54402a17708d75f53";
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || "sk_027cc7d58d72b6e949861dc508c81ae54402a17708d75f53";
 
 const outputSchema: Schema = {
   type: Type.OBJECT,
